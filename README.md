@@ -15,6 +15,7 @@ Java 21 · Spring Boot 3.5 (Web, GraphQL, Data JPA, Validation) · H2 (nhúng, t
 - `products` — tất cả sản phẩm, **giá tăng dần**
 - `productsByCategory(categoryId)` — sản phẩm theo 1 danh mục
 - CRUD đầy đủ cho `Product` và `Category` (`create/update/delete`), có validate + trả lỗi rõ ràng
+- **Upload ảnh cho Category**: form Thêm/Sửa danh mục có nút chọn file ảnh (PNG/JPG/WEBP/GIF/SVG, tối đa 5MB). Ảnh được gửi qua REST `POST /api/upload` (multipart, AJAX riêng vì GraphQL không xử lý file nhị phân), lưu vào thư mục `uploads/` ngoài classpath và phục vụ tĩnh tại `/uploads/**`; URL trả về mới được ghi vào `Category.images` qua mutation GraphQL.
 
 ## Chạy thử
 ```bash
@@ -38,8 +39,11 @@ src/main/java/vn/iotstar/catalog/
 ├── repository/    # Spring Data JPA
 ├── dto/           # Input (ghi) / View (đọc)
 ├── service/       # nghiệp vụ + transaction
-└── controller/     # @QueryMapping / @MutationMapping + xử lý lỗi
+├── controller/    # @QueryMapping / @MutationMapping + xử lý lỗi + UploadController (REST upload ảnh)
+└── config/        # DemoData (seed), WebConfig (phục vụ /uploads/** tĩnh)
 src/main/resources/
 ├── graphql/schema.graphqls
-└── static/        # index.html + app.js (AJAX) + styles.css + images/
+└── static/        # index.html + app.js (AJAX) + styles.css + images/ (icon danh mục mặc định)
 ```
+
+Thư mục `data/` (H2) và `uploads/` (ảnh do người dùng tải lên) được tạo lúc chạy, không commit lên Git (`.gitignore`).
