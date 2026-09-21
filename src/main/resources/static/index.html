@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Catalog — Quản lý sản phẩm</title><link rel="stylesheet" href="styles.css"><script src="app.js" defer></script>
+</head>
+<body>
+<header><a class="brand" href="./"><span class="brand-icon">C</span> catalog<span class="brand-dot">.</span></a><span class="header-note">KHÔNG GIAN QUẢN LÝ</span><span class="avatar" title="Bản thực hành">QL</span></header>
+<main>
+  <div class="intro"><div><p class="eyebrow">DANH MỤC & SẢN PHẨM</p><h1>Mọi sản phẩm, một nơi.</h1><p class="muted">Sắp xếp danh mục, cập nhật sản phẩm và quản lý kho hàng của bạn.</p></div><button id="refresh" class="secondary">↻ Làm mới dữ liệu</button></div>
+  <div class="stats"><article><span>Tổng sản phẩm</span><strong id="product-count">—</strong><small>Trong toàn bộ danh mục</small></article><article><span>Danh mục</span><strong id="category-count">—</strong><small>Nhóm sản phẩm đang quản lý</small></article><article><span>Tổng tồn kho</span><strong id="stock-count">—</strong><small>Đơn vị sản phẩm</small></article></div>
+  <div id="notice" role="status" aria-live="polite" hidden></div>
+  <div class="tabs" role="tablist" aria-label="Nội dung quản lý"><button id="product-tab" role="tab" aria-selected="true" aria-controls="products-panel">Sản phẩm</button><button id="category-tab" role="tab" aria-selected="false" aria-controls="categories-panel">Danh mục</button></div>
+  <section id="products-panel" role="tabpanel" aria-labelledby="product-tab" class="panel">
+    <div class="panel-top"><div><h2>Danh sách sản phẩm</h2><p class="muted">Giá được sắp xếp từ thấp đến cao.</p></div><button id="new-product">+ Thêm sản phẩm</button></div>
+    <div class="filters"><label for="category-filter">Danh mục <select id="category-filter"><option value="">Tất cả danh mục</option></select></label><span class="sort-tag">↑ Giá tăng dần</span><span id="result-count" class="muted"></span></div>
+    <div class="table-wrap"><table><thead><tr><th>SẢN PHẨM</th><th>DANH MỤC</th><th>GIÁ BÁN</th><th>TỒN KHO</th><th>NGƯỜI TẠO</th><th>THAO TÁC</th></tr></thead><tbody id="products-body"><tr><td colspan="6" class="empty">Đang tải dữ liệu…</td></tr></tbody></table></div>
+  </section>
+  <section id="categories-panel" role="tabpanel" aria-labelledby="category-tab" class="panel" hidden>
+    <div class="panel-top"><div><h2>Danh sách danh mục</h2><p class="muted">Mỗi danh mục có thể liên kết với nhiều người dùng.</p></div><button id="new-category">+ Thêm danh mục</button></div>
+    <div class="table-wrap"><table><thead><tr><th>DANH MỤC</th><th>NGƯỜI DÙNG LIÊN KẾT</th><th>SỐ SẢN PHẨM</th><th>THAO TÁC</th></tr></thead><tbody id="categories-body"></tbody></table></div>
+  </section>
+  <footer><span>Catalog · Bài thực hành Lập trình Web</span><a href="graphiql" target="_blank" rel="noopener">Mở GraphiQL ↗</a></footer>
+</main>
+<dialog id="product-dialog"><form id="product-form">
+  <div class="dialog-heading"><div><p class="eyebrow">SẢN PHẨM</p><h2 id="product-heading">Thêm sản phẩm</h2></div><button type="button" class="close secondary" data-close="product-dialog" aria-label="Đóng">×</button></div>
+  <input type="hidden" name="id">
+  <label>Tên sản phẩm <input name="title" required maxlength="200" placeholder="Ví dụ: Bàn phím không dây"></label>
+  <div class="form-row"><label>Giá bán (₫) <input name="price" type="number" min="0" max="9999999999999.99" step="0.01" required></label><label>Số lượng <input name="quantity" type="number" min="0" max="2147483647" step="1" required></label></div>
+  <div class="form-row"><label>Danh mục <select name="categoryId" required></select></label><label>Người tạo <select name="userId" required></select></label></div>
+  <label>Mô tả <textarea name="desc" rows="3" maxlength="2000" placeholder="Thông tin về sản phẩm…"></textarea></label>
+  <p class="form-error" role="alert" hidden></p><div class="dialog-footer"><button type="button" class="secondary" data-close="product-dialog">Hủy</button><button type="submit">Lưu sản phẩm</button></div>
+</form></dialog>
+<dialog id="category-dialog"><form id="category-form">
+  <div class="dialog-heading"><div><p class="eyebrow">DANH MỤC</p><h2 id="category-heading">Thêm danh mục</h2></div><button type="button" class="close secondary" data-close="category-dialog" aria-label="Đóng">×</button></div>
+  <input type="hidden" name="id"><label>Tên danh mục <input name="name" required maxlength="120" placeholder="Ví dụ: Phụ kiện"></label>
+  <label>Đường dẫn ảnh <input name="images" maxlength="1000" placeholder="/images/accessory.svg hoặc https://…"></label><p class="hint">Nhập URL ảnh hoặc đường dẫn ảnh có sẵn trong ứng dụng.</p>
+  <fieldset><legend>Người dùng liên kết</legend><div id="category-users" class="user-options"></div></fieldset>
+  <p class="form-error" role="alert" hidden></p><div class="dialog-footer"><button type="button" class="secondary" data-close="category-dialog">Hủy</button><button type="submit">Lưu danh mục</button></div>
+</form></dialog>
+<dialog id="delete-dialog"><form id="delete-form"><p class="eyebrow">XÁC NHẬN XÓA</p><h2>Xóa mục này?</h2><p id="delete-description"></p><p class="hint">Thao tác này không thể hoàn tác.</p><p class="form-error" role="alert" hidden></p><div class="dialog-footer"><button type="button" class="secondary" data-close="delete-dialog">Hủy</button><button type="submit" class="danger-solid">Xác nhận xóa</button></div></form></dialog>
+</body>
+</html>

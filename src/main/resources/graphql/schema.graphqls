@@ -1,0 +1,55 @@
+type Query {
+    "Tất cả sản phẩm, sắp xếp giá tăng dần; cùng giá thì ID tăng dần."
+    products: [Product!]!
+    productById(id: ID!): Product
+    productsByCategory(categoryId: ID!): [Product!]!
+    categories: [Category!]!
+    categoryById(id: ID!): Category
+    users: [User!]!
+}
+type Mutation {
+    createProduct(input: ProductInput!): Product!
+    updateProduct(id: ID!, input: ProductInput!): Product!
+    deleteProduct(id: ID!): Boolean!
+    createCategory(input: CategoryInput!): Category!
+    updateCategory(id: ID!, input: CategoryInput!): Category!
+    deleteCategory(id: ID!): Boolean!
+}
+type Product {
+    id: ID!
+    title: String!
+    quantity: Int!
+    desc: String
+    price: Float!
+    userid: ID!
+    user: User!
+    category: Category!
+}
+type Category {
+    id: ID!
+    name: String!
+    images: String
+    users: [User!]!
+    products: [Product!]!
+}
+type User {
+    id: ID!
+    fullname: String!
+    email: String!
+    phone: String
+    categories: [Category!]!
+}
+input ProductInput {
+    title: String!
+    quantity: Int!
+    desc: String
+    price: Float!
+    userId: ID!
+    categoryId: ID!
+}
+input CategoryInput {
+    name: String!
+    "URL ảnh hoặc đường dẫn ảnh tĩnh."
+    images: String
+    userIds: [ID!]!
+}
